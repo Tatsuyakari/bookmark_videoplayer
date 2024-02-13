@@ -186,7 +186,7 @@
 
 <div id="video-container">
     <video id="myVideo" controls preload="none" poster="https://www.blender.org/wp-content/uploads/2020/08/blender290_youtube_thumbnail.jpg" controlslist="nodownload" oncontextmenu="return false">
-        <source src="https://your-url.com" type="video/mp4">
+        <source src="https://your_url.com" type="video/mp4">
     </video>
 
     <div class="button-container">
@@ -276,19 +276,7 @@ function saveBookmarks(bookmarkList) {
     localStorage.setItem(pageKey, JSON.stringify(bookmarkList));
 }
 
-function exportBookmarks() {
-    var bookmarkList = getBookmarks();
-    var exportData = JSON.stringify(bookmarkList);
-    var filenameFromUrl = getFilenameFromUrl();
 
-    var blob = new Blob([exportData], { type: "application/json" });
-    var url = URL.createObjectURL(blob);
-
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "bookmarks." + filenameFromUrl + ".json";
-    a.click();
-}
 
 function displayBookmarkList() {
     bookmarkListElement.innerHTML = "";
@@ -354,44 +342,44 @@ function getDomainExtension() {
 
 
 function exportBookmarks() {
-var bookmarkList = localStorage.getItem("bookmarkList") ? JSON.parse(localStorage.getItem("bookmarkList")) : [];
-var exportData = JSON.stringify(bookmarkList);
-var domainExtension = getDomainExtension();
+    var bookmarkList = getBookmarks();
+    var exportData = JSON.stringify(bookmarkList);
+    var domainExtension = getDomainExtension();
 
+    var blob = new Blob([exportData], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
 
-var blob = new Blob([exportData], { type: "application/json" });
-var url = URL.createObjectURL(blob);
-
-var a = document.createElement("a");
-a.href = url;
-a.download = "bookmarks." + domainExtension + ".json"; // Sử dụng đuôi phía sau của tên miền
-a.click();
-
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "bookmarks." + domainExtension + ".json";
+    a.click();
 }
 
 
 
+
     function importBookmarks() {
-        var input = document.createElement("input");
-        input.type = "file";
-        input.accept = ".json";
+    var input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
 
-        input.onchange = function (event) {
-            var file = event.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var importedBookmarks = JSON.parse(e.target.result);
-                    importedBookmarks = sortBookmarksByTime(importedBookmarks);
-                    localStorage.setItem("bookmarkList", JSON.stringify(importedBookmarks));
-                    displayBookmarkList();
-                };
-                reader.readAsText(file);
-            }
-        };
+    input.onchange = function (event) {
+        var file = event.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var importedBookmarks = JSON.parse(e.target.result);
+                importedBookmarks = sortBookmarksByTime(importedBookmarks);
+                var pageKey = getPageKey(); // Get the dynamic page-specific key
+                localStorage.setItem(pageKey, JSON.stringify(importedBookmarks)); // Update the local storage key
+                displayBookmarkList();
+            };
+            reader.readAsText(file);
+        }
+    };
 
-        input.click();
-    }
+    input.click();
+}
 
     displayBookmarkList();
 </script>
