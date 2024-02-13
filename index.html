@@ -186,7 +186,7 @@
 
 <div id="video-container">
     <video id="myVideo" controls preload="none" poster="https://www.blender.org/wp-content/uploads/2020/08/blender290_youtube_thumbnail.jpg" controlslist="nodownload" oncontextmenu="return false">
-        <source src="www.your-url-here.com" type="video/mp4">
+        <source src="https://your-url.com" type="video/mp4">
     </video>
 
     <div class="button-container">
@@ -241,58 +241,101 @@
             playPauseButton.innerHTML = '<i class="fas fa-play"></i>';
         }
     }
-
-    function createBookmark() {
-        var bookmarkList = localStorage.getItem("bookmarkList") ? JSON.parse(localStorage.getItem("bookmarkList")) : [];
-        var bookmarkName = prompt("Enter a name for the bookmark:");
-        if (bookmarkName !== null) {
-            bookmarkList.push({ time: video.currentTime, name: bookmarkName, marked: false });
-            bookmarkList = sortBookmarksByTime(bookmarkList);
-            localStorage.setItem("bookmarkList", JSON.stringify(bookmarkList));
-            displayBookmarkList();
-        }
+function createBookmark() {
+    var bookmarkList = getBookmarks();
+    var bookmarkName = prompt("Enter a name for the bookmark:");
+    
+    if (bookmarkName !== null) {
+        bookmarkList.push({ time: video.currentTime, name: bookmarkName, marked: false });
+        bookmarkList = sortBookmarksByTime(bookmarkList);
+        saveBookmarks(bookmarkList);
+        displayBookmarkList();
     }
+}
+
+function deleteBookmark(index) {
+    var bookmarkList = getBookmarks();
+    bookmarkList.splice(index, 1);
+    saveBookmarks(bookmarkList);
+    displayBookmarkList();
+}
+
+function getPageKey() {
+    var url = window.location.href;
+    return "bookmarkList_" + url;
+}
+
+function getBookmarks() {
+    var pageKey = getPageKey();
+    var bookmarkList = localStorage.getItem(pageKey);
+    return bookmarkList ? JSON.parse(bookmarkList) : [];
+}
+
+function saveBookmarks(bookmarkList) {
+    var pageKey = getPageKey();
+    localStorage.setItem(pageKey, JSON.stringify(bookmarkList));
+}
+
+function exportBookmarks() {
+    var bookmarkList = getBookmarks();
+    var exportData = JSON.stringify(bookmarkList);
+    var filenameFromUrl = getFilenameFromUrl();
+
+    var blob = new Blob([exportData], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "bookmarks." + filenameFromUrl + ".json";
+    a.click();
+}
+
+function displayBookmarkList() {
+    bookmarkListElement.innerHTML = "";
+    var bookmarkList = getBookmarks();
+    
+    for (var i = 0; i < bookmarkList.length; i++) {
+        var listItem = document.createElement("li");
+        listItem.innerHTML = `
+            <div class="bookmark-info">${formatTime(bookmarkList[i].time)}</div>
+            <div class="bookmark-name">${bookmarkList[i].name}</div>
+            <div class="bookmark-buttons">
+                <button class="jump-button" onclick="jumpToBookmark(${bookmarkList[i].time})"><i class="fas fa-arrow-right"></i></button>
+                <button class="mark-button" onclick="toggleMarked(${i})"><i class="${bookmarkList[i].marked ? 'fas' : 'far'} fa-star"></i></button>
+                <button class="delete-button" onclick="deleteBookmark(${i})"><i class="fas fa-trash-alt"></i></button>
+            </div>`;
+        
+        if (bookmarkList[i].marked) {
+            listItem.classList.add("marked");
+        }
+
+        bookmarkListElement.appendChild(listItem);
+    }
+}
+
+function toggleMarked(index) {
+    var bookmarkList = getBookmarks();
+    bookmarkList[index].marked = !bookmarkList[index].marked;
+    saveBookmarks(bookmarkList);
+    displayBookmarkList();
+}
+
+function deleteBookmark(index) {
+    var bookmarkList = getBookmarks();
+    bookmarkList.splice(index, 1);
+    saveBookmarks(bookmarkList);
+    displayBookmarkList();
+}
+
 
     function sortBookmarksByTime(bookmarks) {
         return bookmarks.sort((a, b) => a.time - b.time);
     }
 
-    function displayBookmarkList() {
-        bookmarkListElement.innerHTML = "";
-        var bookmarkList = localStorage.getItem("bookmarkList") ? JSON.parse(localStorage.getItem("bookmarkList")) : [];
-        for (var i = 0; i < bookmarkList.length; i++) {
-            var listItem = document.createElement("li");
-            listItem.innerHTML = `
-                <div class="bookmark-info">${formatTime(bookmarkList[i].time)}</div>
-                <div class="bookmark-name">${bookmarkList[i].name}</div>
-                <div class="bookmark-buttons">
-                    <button class="jump-button" onclick="jumpToBookmark(${bookmarkList[i].time})"><i class="fas fa-arrow-right"></i></button>
-                    <button class="mark-button" onclick="toggleMarked(${i})"><i class="far fa-star"></i></button>
-                    <button class="delete-button" onclick="deleteBookmark(${i})"><i class="fas fa-trash-alt"></i></button>
-                </div>`;
-            if (bookmarkList[i].marked) {
-                listItem.classList.add("marked");
-            }
-            bookmarkListElement.appendChild(listItem);
-        }
-    }
+
 
     function jumpToBookmark(time) {
         video.currentTime = time;
-    }
-
-    function toggleMarked(index) {
-        var bookmarkList = localStorage.getItem("bookmarkList") ? JSON.parse(localStorage.getItem("bookmarkList")) : [];
-        bookmarkList[index].marked = !bookmarkList[index].marked;
-        localStorage.setItem("bookmarkList", JSON.stringify(bookmarkList));
-        displayBookmarkList();
-    }
-
-    function deleteBookmark(index) {
-        var bookmarkList = localStorage.getItem("bookmarkList") ? JSON.parse(localStorage.getItem("bookmarkList")) : [];
-        bookmarkList.splice(index, 1);
-        localStorage.setItem("bookmarkList", JSON.stringify(bookmarkList));
-        displayBookmarkList();
     }
 
     function formatTime(time) {
