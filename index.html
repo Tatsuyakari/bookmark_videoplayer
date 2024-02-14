@@ -1,220 +1,236 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+
+        
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script>
+        // Define variables for source video and poster URLs
+        var videoSource = "https://karis.fun/Items/5a07ee44b080132527b3a4607bd377a1/Download?api_key=ddb90efdfda0472c8f48bcaadd09b0b1";
+        var posterURL = "https://www.blender.org/wp-content/uploads/2020/08/blender290_youtube_thumbnail.jpg";
+    </script>
     <style>
-        body {
-            margin: 0;
-            font-family: Helvetica, Arial, sans-serif;
-        }
+body {
+    margin: 0;
+    font-family: 'Monaco', monospace; /* Use a different monospace font */
+}
 
-        #video-container {
-            background-color: #333;
-            padding: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 20px;
-        }
+#video-container {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px;
+    width: 100%; /* Adjust the width as needed */
+    margin: auto; /* Center the container */
+}
 
-        #myVideo {
-            width: 100%;
-            border-radius: 10px;
-        }
+#myVideo {
+    width: 100%;
+    border-radius: 5px;
+}
 
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
 
-        .button-container button {
-            width: 50px;
-            height: 50px;
-            background-color: #808080;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+.button-container button {
+    width: 50px;
+    height: 50px;
+    background-color: #808080;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-        .button-container button:hover {
-            background-color: #666666;
-            transform: scale(1.05);
-        }
+.button-container button:hover {
+    background-color: #666666;
+    transform: scale(1.1);
+}
 
-        .bookmark-button {
-            flex: 0.25; /* Dãn ra toàn bộ phần còn trống */
-            display: flex;
-            align-items: center;
-        }
+.bookmark-button {
+    flex:0.25;
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
 
-        .bookmark-button button {
-            width: 100%; /* Dãn ra toàn bộ phần còn trống */
-            height: 50px;
-            background-color: #808080;
-            color: #ffffff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Căn giữa theo chiều ngang */
-            padding: 0 10px;
-            white-space: nowrap; /* Ngăn chữ tràn ra ngoài */
-        }
+.bookmark-button button {
+    flex: 1;
+    height: 50px;
+    background-color: #808080;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    white-space: nowrap;
+}
 
-        .bookmark-button button:hover {
-            background-color: #666666;
-            transform: scale(1.05);
-        }
+.bookmark-button button:hover {
+    background: linear-gradient(to right, #666666, #808080);
+    color: #fff;
+    transform: scale(1.05);
+}
 
-        .bookmark-icon {
-            margin-right: 5px;
-        }
+.bookmark-icon {
+    margin-right: 5px;
+}
 
-        #bookmarkListContainer {
-            margin-top: 15px;
-        }
+#bookmarkListContainer {
+    margin-top: 20px;
+}
 
-        #bookmarkList {
-            padding: 0;
-            list-style: none;
-            margin: 0;
-        }
+#bookmarkList {
+    padding: 0;
+    list-style: none;
+    margin: 0;
+}
 
-        #bookmarkList li {
-            border: 1px solid #555;
-            background-color: #444;
-            border-radius: 5px;
-            margin-bottom: 5px;
-            padding: 10px;
-            color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: monospace;
-            transition: background-color 0.3s ease;
-        }
+#bookmarkList li {
+    border: 1px solid #555;
+    background-color: #808080  ;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 15px;
+    color: #FFFFFF;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Monaco', monospace;
+    transition: background-color 0.3s ease;
+}
 
-        #bookmarkList li:hover {
-            background-color: #3d3d3d;
-        }
+#bookmarkList li:hover {
+    background-color: #f0f0f0;
+}
 
-        #bookmarkList li.marked {
-            background-color: #ff7f00;
-        }
+#bookmarkList li.marked {
+    background-color: #ff7f00;
+}
 
-        .bookmark-info {
-            text-align: left;
-        }
+.bookmark-info {
+    text-align: left;
+}
 
-        .bookmark-name {
-            text-align: center;
-            flex-grow: 1;
-        }
+.bookmark-name {
+    text-align: center;
+    flex-grow: 1;
+}
 
-        .bookmark-buttons {
-            display: flex;
-            gap: 10px;
-        }
+.bookmark-buttons button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-        .bookmark-buttons button {
-            width: 30px;
-            height: 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+.jump-button, .mark-button, .delete-button {
+    background-color: #808080;
+    color: #ffffff;
+}
 
-        .jump-button {
-            background-color: #808080;
-            color: #ffffff;
-        }
+.bookmark-buttons button:hover {
+    transform: scale(1.1);
+}
 
-        .mark-button {
-            background-color: #808080;
-            color: #ffffff;
-        }
+.export-import-container {
+    margin-top: 20px;
+    text-align: center;
+}
 
-        .delete-button {
-            background-color: #808080;
-            color: #ffffff;
-        }
+.export-import-buttons button {
+    background-color: #404040;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
 
-        .bookmark-buttons button:hover {
-            transform: scale(1.1);
-        }
+.export-import-buttons button:hover {
+    background-color: #333333;
+    transform: scale(1.1);
+}
 
-        .export-import-container {
-            margin-top: 20px;
-            text-align: center;
-        }
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
 
-        .export-import-buttons button {
-            background-color: #404040;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
+@media only screen and (max-width: 768px) {
+    .button-container {
+        flex-direction: column;
+    }
 
-        .export-import-buttons button:hover {
-            background-color: #333333;
-            transform: scale(1.05);
-          .blinking {
-            animation: blink 1s linear infinite;
-        }
+    .bookmark-button button {
+        margin-top: 15px;
+    }
+}
 
-        @keyframes blink {
-            50% {
-                opacity: 0;
-            }
-        }
-        }
+#bookmarkListContainer,
+.export-import-container {
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out forwards;
+}
+
     </style>
-</head>
-<body>
 
-<div id="video-container">
-    <video id="myVideo" controls preload="none" poster="https://www.blender.org/wp-content/uploads/2020/08/blender290_youtube_thumbnail.jpg" controlslist="nodownload" oncontextmenu="return false">
-        <source src="https://your_url.com" type="video/mp4">
-    </video>
 
-    <div class="button-container">
-        <div>
-            <button onclick="rewind(-30)"><i class="fas fa-backward"></i></button>
-            <button id="playPauseButton" onclick="togglePlayPause()"><i class="fas fa-play"></i></button>
-            <button onclick="forward(30)"><i class="fas fa-forward"></i></button>
+ <div id="video-container">
+        <video id="myVideo" controls="" preload="none" poster="" controlslist="nodownload" oncontextmenu="return false">
+            <source src="" type="video/mp4">
+        </video>
+
+        <div class="button-container">
+            <div>
+                <button onclick="rewind(-30)"><i class="fas fa-backward"></i></button>
+                <button id="playPauseButton" onclick="togglePlayPause()"><i class="fas fa-play"></i></button>
+                <button onclick="forward(30)"><i class="fas fa-forward"></i></button>
+            </div>
+            <div class="bookmark-button">
+                <button onclick="createBookmark()">
+                    <span class="bookmark-icon"><i class="fas fa-bookmark"></i></span>
+                    Bookmark
+                </button>
+            </div>
         </div>
-        <div class="bookmark-button">
-            <button onclick="createBookmark()">
-                <span class="bookmark-icon"><i class="fas fa-bookmark"></i></span>
-                Bookmark
-            </button>
+
+        <div id="bookmarkListContainer">
+            <ul id="bookmarkList"></ul>
+        </div>
+
+        <div class="export-import-container">
+            <div class="export-import-buttons">
+                <button onclick="exportBookmarks()">Export</button>
+                <button onclick="importBookmarks()">Import</button>
+            </div>
         </div>
     </div>
-
-    <div id="bookmarkListContainer">
-        <ul id="bookmarkList"></ul>
-    </div>
-
-    <div class="export-import-container">
-        <div class="export-import-buttons">
-            <button onclick="exportBookmarks()">Export</button>
-            <button onclick="importBookmarks()">Import</button>
-        </div>
-    </div>
-</div>
-
+<script>
+        // Set source video and poster URLs using variables
+        document.getElementById("myVideo").setAttribute("poster", posterURL);
+        document.querySelector("#myVideo source").setAttribute("src", videoSource);
+    </script>
 <script>
     var video = document.getElementById("myVideo");
     var playPauseButton = document.getElementById("playPauseButton");
@@ -384,5 +400,6 @@ function exportBookmarks() {
     displayBookmarkList();
 </script>
 
-</body>
-</html>
+
+
+    
